@@ -59,7 +59,7 @@ app.post("/compress/uploads/:name/:ext", async (req, res) => {
     plugins: [
       imageminJpegtran(),
       imageminPngquant({
-        quality: [0.4, 0.6],
+        quality: [0.6, 0.9],
         speed: 11
       })
     ]
