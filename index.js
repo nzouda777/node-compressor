@@ -5,7 +5,7 @@ const path = require("path");
 const imagemin = require('imagemin')
 const imageminJpegtran = require("imagemin-jpegtran");
 const imageminPngquant = require("imagemin-pngquant");
-
+const sharp = require('sharp')
 const app = express();
 app.use('/uploads', express.static(path.join(__dirname + '/uploads')));
 
@@ -52,20 +52,21 @@ app.post("/", upload.single("image"), (req, res, next) => {
 
   res.render("image", { url: file.path, name: file.filename, ext: ext });
 });
+const destination = path.join(__dirname,'output',new Date().getTime() + ".jpeg")
+app.post("/compress/uploads/:name/:ext", async (req, res, path) => {
+  const files = await sharp("uploads/" + req.params.name).resize(640, 480).jpeg({
+    
+    quality: 80,
+    chromaSubsampling: '4:4:4'
+  
+  }).toFile(destination, (err, info) => {
+    if (err) {
+      res.send(err)
+    } else {
+      res.send(info)
+    }
+  })
 
-app.post("/compress/uploads/:name/:ext", async (req, res) => {
-  const files = await imagemin(["uploads/" + req.params.name], {
-    destination: "output",
-    plugins: [
-      imageminJpegtran(),
-      imageminPngquant({
-        quality: [0.6, 0.9],
-        speed: 11
-      })
-    ]
-  });
-
-    res.download(files[0].destinationPath);
 });
 
 app.listen(1300, () => {
