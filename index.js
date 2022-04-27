@@ -56,7 +56,7 @@ const destination = path.join(__dirname,'output',new Date().getTime() + ".jpeg")
 app.post("/compress/uploads/:name/:ext", async (req, res, path) => {
   const files = await sharp("uploads/" + req.params.name).resize(640, 480).jpeg({
     
-    quality: 80,
+    quality: 100,
     chromaSubsampling: '4:4:4'
   
   }).toFile(destination, (err, info) => {
